@@ -6,7 +6,7 @@ public class BrickBehavior : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            Destroy(gameObject); // Destroy the brick when hit by the ball
+            Destroy(gameObject); 
         }
     }
 }
