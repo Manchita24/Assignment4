@@ -3,12 +3,12 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     public float speed = 5f;
-    private Vector2 direction = new Vector2(1, 1); 
-    private float screenLeft = -7f;  
-    private float screenRight = 7f;  
-    private float screenTop = 4.0f;  
+    private Vector2 direction = new Vector2(1, 1);
+    private float screenLeft = -7f;
+    private float screenRight = 7f;
+    private float screenTop = 4.0f;
     private float screenBottom = -4.0f;
-    
+
     private Rigidbody2D _rb;
     private AudioSource _source;
 
@@ -17,33 +17,31 @@ public class Ball : MonoBehaviour
     [SerializeField] private AudioClip _brickHitSound;
 
     void Start()
-    {  
-        _rb = GetComponent<Rigidbody2D>(); 
+    {
+        _rb = GetComponent<Rigidbody2D>();
         _source = GetComponent<AudioSource>();
 
-        direction = new Vector2(1,1).normalized;
+        direction = new Vector2(1, 1).normalized;
         ResetBall();
     }
 
     void Update()
     {
-        
         transform.position += (Vector3)(direction * speed * Time.deltaTime);
 
        
         if (transform.position.x <= screenLeft || transform.position.x >= screenRight)
         {
             direction.x *= -1; 
-            PlaySound(_wallHitSound); 
+            PlaySound(_wallHitSound);
         }
 
         if (transform.position.y >= screenTop)
         {
             direction.y *= -1; 
-            PlaySound(_wallHitSound); 
+            PlaySound(_wallHitSound);
         }
 
-       
         if (transform.position.y <= screenBottom)
         {
             ResetBall();
@@ -59,16 +57,28 @@ public class Ball : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Paddle"))
         {
-           
             Vector2 newDirection = Vector2.Reflect(direction, collision.contacts[0].normal);
             direction = newDirection.normalized;
-
-            PlaySound(_paddleHitSound); 
+            PlaySound(_paddleHitSound);
         }
 
         if (collision.gameObject.CompareTag("Brick"))
         {
-            PlaySound(_brickHitSound); 
+            
+            float xDistance = Mathf.Abs(transform.position.x - collision.transform.position.x);
+            float yDistance = Mathf.Abs(transform.position.y - collision.transform.position.y);
+
+            
+            if (xDistance > yDistance)
+            {
+                direction.x *= -1; 
+            }
+            else
+            {
+                direction.y *= -1;
+            }
+
+            PlaySound(_brickHitSound);
             Destroy(collision.gameObject);
         }
     }
@@ -81,4 +91,5 @@ public class Ball : MonoBehaviour
         }
     }
 }
+
 
